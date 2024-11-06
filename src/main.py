@@ -2,6 +2,21 @@ import pandas as pd
 import glob
 import os
 
+def dedectFlood(group):
+    group = group.reset_index(drop=True)
+    highestLevelIndex = group['stan aktualny'].idxmax()
+
+    for i in range(1, len(group)):
+        if i <= highestLevelIndex:
+            if group['stan aktualny'].iloc[i] < group['stan aktualny'].iloc[i-1]: 
+                return False
+        elif i > highestLevelIndex:
+            if group['stan aktualny'].iloc[i] > group['stan aktualny'].iloc[i-1]:
+                return False
+            
+    return True
+
+
 folderPath = "data/"
 
 waterLevelsData = []
@@ -32,11 +47,8 @@ waterLevelsData['czas pomiaru'] = pd.to_datetime(waterLevelsData['czas pomiaru']
 waterLevelsData['szerokosc geo'] = pd.to_numeric(waterLevelsData['szerokosc geo'])
 
 
-##waterLevelsData = waterLevelsData.sort_values(by=['szerokosc geo', 'czas pomiaru'])
+results = waterLevelsData.groupby('nazwa stacji').filter(dedectFlood).drop_duplicates(subset=['nazwa stacji'])
+results = results.reset_index(drop=True).drop(columns=['stan aktualny', 'czas pomiaru', 'szerokosc geo', 'dlugosc geo'])
 
 
-avgWaterLevels =  waterLevelsData.groupby('nazwa stacji')['stan aktualny'].mean()
-
-
-print(avgWaterLevels)
-#print(waterLevelsData) 
+print(results)
