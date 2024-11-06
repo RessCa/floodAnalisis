@@ -1,10 +1,16 @@
 import pandas as pd
+import folium
 import glob
 import os
 
 def dedectFlood(group):
     group = group.reset_index(drop=True)
+    min = group['stan aktualny'].min()
+    max = group['stan aktualny'].max()
     highestLevelIndex = group['stan aktualny'].idxmax()
+
+    if max < min+200:
+        return False
 
     for i in range(1, len(group)):
         if i <= highestLevelIndex:
@@ -45,10 +51,20 @@ waterLevelsData = waterLevelsData.loc[
 waterLevelsData['stan aktualny'] = pd.to_numeric(waterLevelsData['stan aktualny'])
 waterLevelsData['czas pomiaru'] = pd.to_datetime(waterLevelsData['czas pomiaru'])
 waterLevelsData['szerokosc geo'] = pd.to_numeric(waterLevelsData['szerokosc geo'])
+waterLevelsData['dlugosc geo'] = pd.to_numeric(waterLevelsData['dlugosc geo'])
 
 
 results = waterLevelsData.groupby('nazwa stacji').filter(dedectFlood).drop_duplicates(subset=['nazwa stacji'])
-results = results.reset_index(drop=True).drop(columns=['stan aktualny', 'czas pomiaru', 'szerokosc geo', 'dlugosc geo'])
+results = results.reset_index(drop=True).drop(columns=['stan aktualny', 'czas pomiaru'])
+
+
+for index, result in results.iterrows():
+    if index == 0:
+        map = folium.Map(location=[result['szerokosc geo'], result['dlugosc geo']])
+        
+    folium.Marker(location=[result['szerokosc geo'], result['dlugosc geo']], popup = result['nazwa stacji']).add_to(map)
+
+map.save("map.html")
 
 
 print(results)

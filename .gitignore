@@ -1,4 +1,8 @@
 myvenv/
+venv/
+.vemv/
+
+map.html
 
 __pycache__/
 *.py[cod]
