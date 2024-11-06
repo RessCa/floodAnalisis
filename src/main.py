@@ -9,7 +9,7 @@ def dedectFlood(group):
     max = group['stan aktualny'].max()
     highestLevelIndex = group['stan aktualny'].idxmax()
 
-    if max < min+200:
+    if max < min+100:
         return False
 
     for i in range(1, len(group)):
@@ -54,8 +54,9 @@ waterLevelsData['szerokosc geo'] = pd.to_numeric(waterLevelsData['szerokosc geo'
 waterLevelsData['dlugosc geo'] = pd.to_numeric(waterLevelsData['dlugosc geo'])
 
 
-results = waterLevelsData.groupby('nazwa stacji').filter(dedectFlood).drop_duplicates(subset=['nazwa stacji'])
-results = results.reset_index(drop=True).drop(columns=['stan aktualny', 'czas pomiaru'])
+results = waterLevelsData.groupby('nazwa stacji').filter(dedectFlood)
+results = results.reset_index(drop=True)#.drop(columns=['czas pomiaru'])
+results = results.sort_values(['nazwa stacji', 'czas pomiaru'])
 
 
 for index, result in results.iterrows():
