@@ -1,3 +1,4 @@
+import matplotlib.pyplot as mpl
 import pandas as pd
 import folium
 import glob
@@ -21,6 +22,21 @@ def dedectFlood(group):
                 return False
             
     return True
+
+
+def createChart(gropu):
+    mpl.figure(figsize=(10, 6))
+    mpl.plot(gropu['czas pomiaru'], gropu['stan aktualny'], marker='o', linestyle='-')
+
+    stacja = gropu['nazwa stacji'].iloc[0]
+    mpl.title(f'Poziom wody w czasie dla stacji {stacja}')
+    mpl.tight_layout()
+    mpl.xticks(rotation=45) 
+    mpl.xlabel('data pomiaru')
+    mpl.ylabel('poziom wody w cm')
+    
+    mpl.savefig(f'chart_{stacja}.png')
+    mpl.close()
 
 
 folderPath = "data/"
@@ -65,6 +81,8 @@ for index, result in results.iterrows():
         
     folium.Marker(location=[result['szerokosc geo'], result['dlugosc geo']], popup = result['nazwa stacji']).add_to(map)
 
+
+results.groupby('nazwa stacji').apply(createChart)
 map.save("map.html")
 
 

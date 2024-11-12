@@ -3,6 +3,7 @@ venv/
 .vemv/
 
 map.html
+*.png
 
 __pycache__/
 *.py[cod]

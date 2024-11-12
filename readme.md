@@ -1,7 +1,8 @@
 # flood analisis script made in python
 
-script is marking location as a flooded when water level goes up and then down and difference betwenn highest and lowest water level is 2m
-then script creates map(folium) wich have all locations on a map<br><br>
+script is marking location as a flooded when water level goes up and then down and difference betwenn highest and lowest point is 1m<br>
+then script creates map(folium) wich have all locations on a map<br>
+and it creates .png files with water level charts to each station where was flood<br><br>
 
 all .csv are in data folder
 
