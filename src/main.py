@@ -24,20 +24,35 @@ def dedectFlood(group):
     return True
 
 
-def createChart(gropu):
-    mpl.figure(figsize=(10, 6))
-    mpl.plot(gropu['czas pomiaru'], gropu['stan aktualny'], marker='o', linestyle='-')
+def createChart(group):
+    mpl.figure(figsize=(16, 9))
+    mpl.plot(group['czas pomiaru'], group['stan aktualny'], marker='o', linestyle='-',)
 
-    stacja = gropu['nazwa stacji'].iloc[0]
+    stacja = group['nazwa stacji'].iloc[0]
     mpl.title(f'Poziom wody w czasie dla stacji {stacja}')
+    mpl.xlabel('czas')
+    mpl.ylabel('poziom wody')
     mpl.tight_layout()
-    mpl.xticks(rotation=45) 
-    mpl.xlabel('data pomiaru')
-    mpl.ylabel('poziom wody w cm')
     
     mpl.savefig(f'chart_{stacja}.png')
     mpl.close()
 
+
+def createCombinedChart(table):
+    mpl.figure(figsize=(16, 9))
+
+    for stacja, group in table.groupby('nazwa stacji'):
+        mpl.plot(group['czas pomiaru'], group['stan aktualny'], marker='o', linestyle='-', label=stacja)
+        
+    mpl.title('Poziom wody w czasie dla wszystkich stacji')
+    mpl.xlabel('czas')
+    mpl.ylabel('poziom wody')
+    mpl.tight_layout()
+    mpl.legend(loc='upper right')
+    
+    mpl.savefig('combined_chart.png')
+    mpl.close()
+    
 
 folderPath = "data/"
 
@@ -83,6 +98,7 @@ for index, result in results.iterrows():
 
 
 results.groupby('nazwa stacji').apply(createChart)
+createCombinedChart(results)
 map.save("map.html")
 
 
